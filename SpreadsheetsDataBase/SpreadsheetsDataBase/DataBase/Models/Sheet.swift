@@ -16,7 +16,7 @@ extension Sheet {
             .sorted { $0.type == .d || $1.type != .d }
     }
     
-    func getChildItems(by parentId: String) -> Sheet {
-        return self.filter { $0.parentId == parentId }
+    func getChildItems(by id: String) -> Sheet {
+        return self.filter { $0.parentId == id }
     }
 }

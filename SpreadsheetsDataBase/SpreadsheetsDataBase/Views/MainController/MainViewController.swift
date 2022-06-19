@@ -8,7 +8,6 @@
 import UIKit
 
 fileprivate struct Constant {
-    static let title: String = "main folder"
     static let numberOfSection: Int = 2
     static let widecellHeight: CGFloat = 60
     static let numberOfitemInRow: CGFloat = 3
@@ -16,49 +15,44 @@ fileprivate struct Constant {
     static let cellProptional: CGFloat = 1.3
 }
 
-class MainViewController: UIViewController {
+class MainViewController: UIViewController, Storybordable {
     
-    var collectionView: UICollectionView?
+    weak var coordinator: AppCoordinator?
+    
+    var collectionView: UICollectionView!
     let network = DataBase(api: "zcofu8bnd3ldl")
     
     var isCollectionViewState = false {
-        didSet {
-            UIView.animate(withDuration: 0.5, delay: 0.1, options: .curveEaseIn) {
-                self.collectionView?.reloadData()
-            }
- self.collectionView?.reloadData()
-        }
+        didSet { collectionView?.reloadData() }
     }
-    
-    var dataSourse: Sheet = [] {
-        didSet {
-            //print(dataSourse)
-            collectionView?.reloadData()
-        }
+    var dataBace: Sheet = [] //all cases of mainsheet
+    var dataSourse: Sheet? {
+        didSet { collectionView?.reloadData() }
     }
     
     @IBOutlet weak var switchStateButton: UIBarButtonItem!
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        title = Constant.title
-        
-        network.obtainSheet { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let sheet):
-                    self.dataSourse = sheet.getMainLayerOfSheet()
-                case .failure(let error):
-                    self.someWrongAlert(self, "Atension", error.localizedDescription)
+        if dataSourse == nil {
+            title = "Main folder"
+            network.obtainSheet { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let sheet):
+                        self.dataBace = sheet
+                        self.dataSourse = sheet.getMainLayerOfSheet()
+                    case .failure(let error):
+                        self.someWrongAlert(self, "Atension", error.localizedDescription)
+                    }
                 }
             }
         }
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         setupCollectionView()
     }
     
@@ -71,6 +65,7 @@ class MainViewController: UIViewController {
 }
 
 private extension MainViewController {
+    
     func setupCollectionView() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -78,25 +73,24 @@ private extension MainViewController {
                                     left: Constant.minimumSpasing,
                                     bottom: Constant.minimumSpasing,
                                     right:Constant.minimumSpasing)
-        layout.minimumLineSpacing = Constant.minimumSpasing
-        
         collectionView = UICollectionView(frame: view.bounds,
                                                collectionViewLayout: layout)
         
-        collectionView?.backgroundColor = .systemBackground
+        collectionView.backgroundColor = .systemBackground
         view.addSubview(collectionView!)
-        collectionView?.register(SquareCollectionViewCell.nib(),
+        collectionView.register(SquareCollectionViewCell.nib(),
                                  forCellWithReuseIdentifier: SquareCollectionViewCell.id)
-        collectionView?.register(WideCollectionViewCell.nib(),
+        collectionView.register(WideCollectionViewCell.nib(),
                                  forCellWithReuseIdentifier: WideCollectionViewCell.id)
-        collectionView?.delegate = self
-        collectionView?.dataSource = self
-        collectionView?.backgroundColor = .white
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.backgroundColor = .white
     }
     
     
 }
 
+//MARK: - UICollectionViewDataSource
 extension MainViewController: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -105,21 +99,19 @@ extension MainViewController: UICollectionViewDataSource {
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-       // return dataSourse.count
-        
         switch isCollectionViewState {
         case false:
             switchStateButton.image = UIImage(systemName: "rectangle.grid.2x2")
             if section == 0 {
                 return 0
             }else{
-                return dataSourse.count
+                return dataSourse?.count ?? 0
             }
           
         case true:
             switchStateButton.image = UIImage(systemName: "list.dash")
             if section == 0 {
-                return dataSourse.count
+                return dataSourse?.count ?? 0
             }else{
                 return 0
             }
@@ -128,7 +120,7 @@ extension MainViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let item = dataSourse[indexPath.item]
+        let item = dataSourse?[indexPath.item]
         switch indexPath.section {
         case 0 :
          guard let wideCell = collectionView.dequeueReusableCell(
@@ -137,7 +129,7 @@ extension MainViewController: UICollectionViewDataSource {
              return UICollectionViewCell()
          }
             
-            wideCell.setupCell(by: item)
+            wideCell.setupCell(by: item!)
             return wideCell
         default:
             guard let squareCell = collectionView.dequeueReusableCell(
@@ -145,20 +137,30 @@ extension MainViewController: UICollectionViewDataSource {
                 for: indexPath) as? SquareCollectionViewCell else {
                 return UICollectionViewCell()
             }
-            squareCell.setupCell(by: item)
+            squareCell.setupCell(by: item!)
             return squareCell
         }
     }
 }
 
+//MARK: - UICollectionViewDelegate
 extension MainViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let item = dataSourse?[indexPath.item] else { return }
         collectionView.deselectItem(at: indexPath, animated: true)
-        print(indexPath.item)
+        if item.type == .d {
+            print(dataSourse!)
+            let newData = dataBace.filter{ $0.parentId == item.uuid }
+            //print("data",item)
+            coordinator?.goToMainVC(newData, dataBace)
+        } else {
+            //print("detail",item)
+            coordinator?.goToDetail(item)
+        }
     }
-    
 }
 
+//MARK: - UICollectionViewDelegateFlowLayout
 extension MainViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
@@ -176,4 +178,9 @@ extension MainViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return Constant.minimumSpasing
     }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return Constant.minimumSpasing
+    }
+    
 }
