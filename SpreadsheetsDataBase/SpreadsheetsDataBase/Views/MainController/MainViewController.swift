@@ -26,7 +26,6 @@ class MainViewController: UIViewController, Storybordable {
     //all data of google spreadsheet
     var dataBace: Sheet = []
     let userDefault = UserDefaults.standard
-    
     var collectionView: UICollectionView!
     var isCollectionViewState = false {
         didSet {
@@ -41,6 +40,7 @@ class MainViewController: UIViewController, Storybordable {
     
     //MARK: - @IBOutlets
     @IBOutlet weak var switchStateButton: UIBarButtonItem!
+    
     
     //MARK: - life cycle methods
     override func viewDidLoad() {
@@ -61,7 +61,6 @@ class MainViewController: UIViewController, Storybordable {
             }
         }
     }
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         collectionView.frame = view.bounds
@@ -85,15 +84,14 @@ private extension MainViewController {
     func setupCollectionView() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.sectionInset = .init(top: 0,
-                                    left: Constant.minimumSpasing,
-                                    bottom: Constant.minimumSpasing,
-                                    right:Constant.minimumSpasing)
-        collectionView = UICollectionView(frame: .zero,
-                                               collectionViewLayout: layout)
+        layout.sectionInset = UIEdgeInsets(top: 0,
+                                           left: Constant.minimumSpasing,
+                                           bottom: Constant.minimumSpasing,
+                                           right: Constant.minimumSpasing)
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.addSubview(collectionView)
         collectionView.backgroundColor = .clear
         collectionView.alwaysBounceVertical = true
-        view.addSubview(collectionView)
         collectionView.register(SquareCollectionViewCell.nib(),
                                  forCellWithReuseIdentifier: SquareCollectionViewCell.id)
         collectionView.register(WideCollectionViewCell.nib(),
