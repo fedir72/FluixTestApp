@@ -16,7 +16,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" systemColor="tertiarySystemGroupedBackgroundColor"/>
                     </view>
                     <navigationItem key="navigationItem" id="QOc-l0-taC">
                         <barButtonItem key="rightBarButtonItem" title="Item" id="c3n-Cy-Xfn">
@@ -40,21 +40,48 @@
                     <view key="view" contentMode="scaleToFill" id="GII-ac-OLp">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="3" translatesAutoresizingMaskIntoConstraints="NO" id="t0N-fd-aKm">
+                                <rect key="frame" x="5" y="386" width="404" height="134"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="0Tz-Bv-PD2">
+                                        <rect key="frame" x="0.0" y="0.0" width="404" height="65.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="26"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="OcX-dX-Wtg">
+                                        <rect key="frame" x="0.0" y="68.5" width="404" height="65.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="26"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </stackView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="iAS-3U-BXP"/>
-                        <color key="backgroundColor" systemColor="systemGray4Color"/>
+                        <color key="backgroundColor" systemColor="tertiarySystemGroupedBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="t0N-fd-aKm" firstAttribute="centerY" secondItem="iAS-3U-BXP" secondAttribute="centerY" id="6o1-jY-tdS"/>
+                            <constraint firstItem="t0N-fd-aKm" firstAttribute="leading" secondItem="iAS-3U-BXP" secondAttribute="leading" constant="5" id="EET-Ks-Zo8"/>
+                            <constraint firstItem="t0N-fd-aKm" firstAttribute="height" secondItem="GII-ac-OLp" secondAttribute="height" multiplier="0.15" id="bbY-ge-Pt5"/>
+                            <constraint firstItem="iAS-3U-BXP" firstAttribute="trailing" secondItem="t0N-fd-aKm" secondAttribute="trailing" constant="5" id="yLV-1t-ITN"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="containLabel" destination="OcX-dX-Wtg" id="MRi-X7-Atl"/>
+                        <outlet property="uuidLabel" destination="0Tz-Bv-PD2" id="mT5-Ig-TPs"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cLS-bz-jMh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1697" y="84"/>
+            <point key="canvasLocation" x="1695.6521739130435" y="83.705357142857139"/>
         </scene>
     </scenes>
     <resources>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemGray4Color">
-            <color red="0.81960784313725488" green="0.81960784313725488" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <systemColor name="tertiarySystemGroupedBackgroundColor">
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

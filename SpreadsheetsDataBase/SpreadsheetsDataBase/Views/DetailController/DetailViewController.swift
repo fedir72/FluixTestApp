@@ -10,25 +10,22 @@ import UIKit
 class DetailViewController: UIViewController, Storybordable {
     
     weak var coordinator: AppCoordinator?
+    var item: SheetItem?
     
-    static let id = "DetailViewController"
-    
-    var item: SheetItem? {
-        didSet {
-            print(item!)
+    @IBOutlet private weak var uuidLabel: UILabel!
+    @IBOutlet private weak var containLabel: UILabel!
+      
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        if let item = item {
+            setupVC(by: item)
         }
     }
     
-    
-    
-    var titleText = "" {
-        didSet {title =  titleText}
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-       print("detail")
+    private func setupVC(by item: SheetItem) {
+        self.title = String(item.content.split(separator: ".").first ?? "File")
+        self.uuidLabel.text = "id: " + item.uuid
+        self.containLabel.text = item.content
     }
  
 }

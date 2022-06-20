@@ -9,8 +9,12 @@ import Foundation
 
 
 class DataBase {
-    //zcofu8bnd3ldl
-    //https://sheetdb.io/api/v1/zcofu8bnd3ldl/keys
+    //zcofu8bnd3ldl Sheet1
+    //https://sheetdb.io/api/v1/zcofu8bnd3ldl
+
+    //i8s3hscsk4ajd  DataSourse
+    //https://sheetdb.io/api/v1/i8s3hscsk4ajd
+
     var id: String
     let session = URLSession(configuration: .default)
     

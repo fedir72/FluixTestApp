@@ -12,5 +12,7 @@ protocol Coordinator {
     
     func start()
     func goToDetail(_ item: SheetItem)
-    func goToMainVC(_ datasourse: Sheet , _ bataBase: Sheet)
+    func goToMainVC(title: String,
+                    datasourse: Sheet ,
+                    dataBase: Sheet)
 }
