@@ -28,9 +28,13 @@ class AppCoordinator: Coordinator {
         navigationController.pushViewController(vc, animated: true)
     }
     
-    func goToMainVC(title: String,datasourse: Sheet ,dataBase: Sheet) {
+    func goToMainVC(currentParentId: String,
+                    title: String,
+                    datasourse: Sheet ,
+                    dataBase: Sheet) {
         let vc = MainViewController.createObject()
         vc.coordinator = self
+        vc.currentParentID = currentParentId
         vc.title = String(title.split(separator: ".").first ?? "File")
         vc.dataSourse = datasourse.getSortedSheet()
         vc.dataBace = dataBase

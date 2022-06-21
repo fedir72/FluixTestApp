@@ -15,8 +15,43 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="5yf-Xh-Vbj">
+                                <rect key="frame" x="5" y="812" width="404" height="50"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f21-bx-Cla">
+                                        <rect key="frame" x="0.0" y="0.0" width="199.5" height="50"/>
+                                        <color key="backgroundColor" systemColor="systemGray5Color"/>
+                                        <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="29"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="new folder"/>
+                                        <connections>
+                                            <action selector="createNewFile:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cXL-mp-qhK"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Abf-Dm-iS7">
+                                        <rect key="frame" x="204.5" y="0.0" width="199.5" height="50"/>
+                                        <color key="backgroundColor" systemColor="systemGray5Color"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="new file"/>
+                                        <connections>
+                                            <action selector="createNewFile:" destination="BYZ-38-t0r" eventType="touchUpInside" id="XNg-Ym-ePh"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="V7R-YU-oTp"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="tertiarySystemGroupedBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="5yf-Xh-Vbj" secondAttribute="trailing" constant="5" id="0g9-ml-Khc"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="5yf-Xh-Vbj" secondAttribute="bottom" id="FjG-J4-wOO"/>
+                            <constraint firstItem="5yf-Xh-Vbj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="5" id="ljE-HT-15L"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="QOc-l0-taC">
                         <barButtonItem key="rightBarButtonItem" title="Item" id="c3n-Cy-Xfn">
@@ -26,12 +61,14 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="newFileButton" destination="Abf-Dm-iS7" id="b4a-0L-l08"/>
+                        <outlet property="newFolderButton" destination="f21-bx-Cla" id="70K-at-wzA"/>
                         <outlet property="switchStateButton" destination="c3n-Cy-Xfn" id="MT0-Y7-1bd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="939.13043478260875" y="83.705357142857139"/>
+            <point key="canvasLocation" x="1849.2753623188407" y="83.705357142857139"/>
         </scene>
         <!--Detail View Controller-->
         <scene sceneID="J3n-B0-zGr">
@@ -76,10 +113,13 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cLS-bz-jMh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1695.6521739130435" y="83.705357142857139"/>
+            <point key="canvasLocation" x="2605.7971014492755" y="83.705357142857139"/>
         </scene>
     </scenes>
     <resources>
+        <systemColor name="systemGray5Color">
+            <color red="0.89803921568627454" green="0.89803921568627454" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
         <systemColor name="tertiarySystemGroupedBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

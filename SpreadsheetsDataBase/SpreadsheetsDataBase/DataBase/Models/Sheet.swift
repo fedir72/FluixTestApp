@@ -12,8 +12,8 @@ typealias Sheet = [SheetItem]
 extension Sheet {
     
     //MARK: - the functions for convinience access to sheet
-    func getMainLayerOfSheet() -> Sheet {
-        return self.filter { $0.parentId == "" }
+    func getFilteredSheet(by id: String) -> Sheet {
+        return self.filter { $0.parentId == id }
                    .sorted { $0.type == .d || $1.type != .d }
     }
     

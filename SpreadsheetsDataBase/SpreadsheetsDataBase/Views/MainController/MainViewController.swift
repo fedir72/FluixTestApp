@@ -10,7 +10,7 @@ import UIKit
 //MARK: - Constants
 fileprivate struct Constant {
     static let stateKey = "isCollectionViewState"
-    static let apiKey = "zcofu8bnd3ldl"
+    static let apiKey = "i8s3hscsk4ajd"
     static let numberOfSection: Int = 2
     static let widecellHeight: CGFloat = 60
     static let numberOfitemInRow: CGFloat = 3
@@ -23,10 +23,13 @@ class MainViewController: UIViewController, Storybordable {
     //MARK: - properties
     weak var coordinator: AppCoordinator?
     let network = DataBase(api: Constant.apiKey)
+    
     //all data of google spreadsheet
     var dataBace: Sheet = []
+    var currentParentID = ""
     let userDefault = UserDefaults.standard
     var collectionView: UICollectionView!
+    
     var isCollectionViewState = false {
         didSet {
             userDefault.set(isCollectionViewState, forKey: Constant.stateKey)
@@ -40,7 +43,8 @@ class MainViewController: UIViewController, Storybordable {
     
     //MARK: - @IBOutlets
     @IBOutlet weak var switchStateButton: UIBarButtonItem!
-    
+    @IBOutlet weak var newFolderButton: UIButton!
+    @IBOutlet weak var newFileButton: UIButton!
     
     //MARK: - life cycle methods
     override func viewDidLoad() {
@@ -48,22 +52,16 @@ class MainViewController: UIViewController, Storybordable {
         setupCollectionView()
         if dataSourse == nil {
             title = "Main folder"
-            network.obtainSheet { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let sheet):
-                        self.dataBace = sheet
-                        self.dataSourse = sheet.getMainLayerOfSheet()
-                    case .failure(let error):
-                        self.someWrongAlert(self, "Atension", error.localizedDescription)
-                    }
-                }
-            }
+            self.getDataForDataSourse()
         }
     }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        collectionView.frame = view.bounds
+        collectionView.frame = .init(x: 0,
+                                     y: 0,
+                                     width: view.bounds.width,
+                                     height: view.bounds.height-90)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -72,14 +70,32 @@ class MainViewController: UIViewController, Storybordable {
     }
     
     //MARK: - @IBActions
+    //toggle the collectionview state
     @IBAction func switchCollectionViewState(_ sender: UIBarButtonItem) {
         isCollectionViewState.toggle()
     }
- 
+    
+
+    
+    @IBAction func createNewFile(_ sender: UIButton) {
+        self.createNewSheetCell(parentId: self.currentParentID,
+                                type: sender.tag == 0 ? .d : .f) { result in
+            switch result {
+            case .success(_):
+                self.getDataForDataSourse()
+            case .failure(let error):
+                self.someWrongAlert(self, "atension", error.localizedDescription)
+            }
+          }
+        }
 }
 
 //MARK: -  private funcs
 private extension MainViewController {
+    
+ 
+    
+    
 //MARK: - setupCollectionView()
     func setupCollectionView() {
         let layout = UICollectionViewFlowLayout()
@@ -98,7 +114,51 @@ private extension MainViewController {
                                  forCellWithReuseIdentifier: WideCollectionViewCell.id)
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .clear
+    }
+    
+   private func createNewSheetCell( parentId: String,
+                            type: TypeOfCell ,
+                            completion: @escaping (Result<Int,SheetError>) -> Void ) {
+        
+        let alert = UIAlertController(title: "Enter new name of item",
+                                      message: nil,
+                                      preferredStyle: .alert)
+        alert.addTextField { $0.placeholder = "enter content" }
+        alert.addAction(.init(title: "cancel", style: .destructive, handler: nil))
+        alert.addAction(.init(title: "save", style: .default, handler: { action in
+            guard let content = alert.textFields?.first?.text,
+                     !content.isEmpty else {
+                self.someWrongAlert(self, "atension", "please enter the text")
+                return
+            }
+            
+           // let content = alert.textFields?.first!.text ?? "no value"
+            let id = UUID().uuidString
+            let item = SheetItem(uuid: id,
+                                 parentId: self.currentParentID,
+                                 type: type, content: content)
+            
+            self.network.putSheetItem(item:item) { result in
+                completion(result)
+            }
+           
+        }))
+        present(alert, animated: true)
+    }
+    
+    func getDataForDataSourse() {
+        network.obtainSheet { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let sheet):
+                    self.dataBace = sheet
+                    self.dataSourse = sheet.getFilteredSheet(by: self.currentParentID)
+                case .failure(let error):
+                    self.someWrongAlert(self, "Atension", error.localizedDescription)
+                }
+            }
+        }
     }
 }
 
@@ -162,7 +222,9 @@ extension MainViewController: UICollectionViewDelegate {
         if item.type == .d {
             let title = String(item.content.split(separator: ".").first ?? "File")
             let newData = dataBace.getChildItems(by: item.uuid)
-            coordinator?.goToMainVC(title: title,
+            
+            coordinator?.goToMainVC(currentParentId: item.uuid,
+                                    title: title,
                                     datasourse: newData,
                                     dataBase: dataBace)
         } else {
