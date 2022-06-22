@@ -24,7 +24,8 @@ class DataBase {
     
     //POST https://sheetdb.io/api/v1/i8s3hscsk4ajd
     //PATCH/PUT https://sheetdb.io/api/v1/58f61be4dda40/{column}/{value}
-    //DELETE https://sheetdb.io/api/v1/58f61be4dda40/{column}/{value}
+    //DELETE https://sheetdb.io/api/v1/i8s3hscsk4ajd/D439E776-2325-401A-AEE6-2076868631AE/00FD826C-D33D-4B76-8388-B417843D472A
+    
     var id: String
     let session = URLSession(configuration: .default)
     
@@ -59,7 +60,7 @@ class DataBase {
         
     }
     
-    open func putSheetItem(item: SheetItem,
+    open func postSheetItem(item: SheetItem,
                           completion: @escaping(Result<Int,SheetError>) -> Void ) {
         guard let url = URL(string: mainUrlString) else {
             completion(.failure(.invalidEndpoint))
@@ -92,6 +93,10 @@ class DataBase {
                 completion(.success(obj.created))
             }
         }.resume()
+    }
+    
+    func deleteCell() {
+        
     }
 }
 

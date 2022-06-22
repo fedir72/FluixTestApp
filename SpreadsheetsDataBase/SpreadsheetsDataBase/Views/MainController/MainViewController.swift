@@ -92,6 +92,29 @@ class MainViewController: UIViewController, Storybordable {
 
 //MARK: -  private funcs
 private extension MainViewController {
+    //MARK: - didtap cellAction func
+    func didTapCellAction(item: SheetItem) {
+        let alert = UIAlertController(title: "Atension", message: "choise the action", preferredStyle: .alert)
+        alert.addAction(.init(title: "delete the information", style: .destructive) { _ in
+            print("delete")
+                
+        })
+        alert.addAction(.init(title: "open", style: .default) { _ in
+            
+            if item.type == .d {
+                let title = String(item.content.split(separator: ".").first ?? "File")
+                let newData = self.dataBace.getChildItems(by: item.uuid)
+                
+                self.coordinator?.goToMainVC(currentParentId: item.uuid,
+                                        title: title,
+                                        datasourse: newData,
+                                        dataBase: self.dataBace)
+            } else {
+                self.coordinator?.goToDetail(item)
+            }
+        })
+        present(alert, animated: true)
+    }
     
  
     
@@ -139,7 +162,7 @@ private extension MainViewController {
                                  parentId: self.currentParentID,
                                  type: type, content: content)
             
-            self.network.putSheetItem(item:item) { result in
+            self.network.postSheetItem(item:item) { result in
                 completion(result)
             }
            
@@ -219,17 +242,7 @@ extension MainViewController: UICollectionViewDelegate {
         
         guard let item = dataSourse?[indexPath.item] else { return }
         collectionView.deselectItem(at: indexPath, animated: true)
-        if item.type == .d {
-            let title = String(item.content.split(separator: ".").first ?? "File")
-            let newData = dataBace.getChildItems(by: item.uuid)
-            
-            coordinator?.goToMainVC(currentParentId: item.uuid,
-                                    title: title,
-                                    datasourse: newData,
-                                    dataBase: dataBace)
-        } else {
-            coordinator?.goToDetail(item)
-        }
+        self.didTapCellAction(item: item)
     }
 }
 
