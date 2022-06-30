@@ -72,7 +72,7 @@ class DataBase {
             completion(.failure(.serializationError))
             return
         }
-        print("newItem",newItem)
+       // print("newItem",newItem)
         var request = URLRequest(url: url)
         request.httpMethod = HTTPmethod.post.rawValue
         request.httpBody = newItem
@@ -95,8 +95,28 @@ class DataBase {
         }.resume()
     }
     
-    func deleteCell() {
-        
+    func deleteCell(by uuid: String,completion: @escaping (Result<DeleteJSON,SheetError>) -> Void) {
+      let urlStr = mainUrlString + "/D439E776-2325-401A-AEE6-2076868631AE/\(uuid)"
+        if let url = URL(string: urlStr) {
+         var request = URLRequest(url: url)
+            request.httpMethod = HTTPmethod.delete.rawValue
+            session.dataTask(with: request) { data, resp, error in
+                guard error == nil else {
+                    completion(.failure(.noData))
+                    return
+                }
+                if let resp = (resp as? HTTPURLResponse){
+                    print("status",resp.statusCode)
+                }
+                guard let json = self.decodejson(type: DeleteJSON.self, from: data) else {
+                    completion(.failure(.serializationError))
+                    return
+                }
+                completion(.success(json))
+            }
+        } else {
+            completion(.failure(.invalidEndpoint))
+        }
     }
 }
 

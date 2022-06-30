@@ -22,10 +22,12 @@ class MainViewController: UIViewController, Storybordable {
     
     //MARK: - properties
     weak var coordinator: AppCoordinator?
+    
     let network = DataBase(api: Constant.apiKey)
     
     //all data of google spreadsheet
     var dataBace: Sheet = []
+    
     var currentParentID = ""
     let userDefault = UserDefaults.standard
     var collectionView: UICollectionView!
@@ -93,10 +95,25 @@ class MainViewController: UIViewController, Storybordable {
 //MARK: -  private funcs
 private extension MainViewController {
     //MARK: - didtap cellAction func
-    func didTapCellAction(item: SheetItem) {
+    func didTapCellAction(item: SheetItem,completion: @escaping () -> Void ) {
         let alert = UIAlertController(title: "Atension", message: "choise the action", preferredStyle: .alert)
-        alert.addAction(.init(title: "delete the information", style: .destructive) { _ in
-            print("delete")
+        alert.addAction(.init(title: "delete the information", style: .destructive) { [self] _ in
+           // print("delete")
+            
+            self.network.deleteCell(by: item.uuid) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                
+                    case .success(let responce):
+                        print("deleted",responce.deleted)
+                        completion()
+                    case .failure(let error):
+                        
+                        print("err",error.localizedDescription)
+                    }
+                }
+                
+            }
                 
         })
         alert.addAction(.init(title: "open", style: .default) { _ in
@@ -242,7 +259,9 @@ extension MainViewController: UICollectionViewDelegate {
         
         guard let item = dataSourse?[indexPath.item] else { return }
         collectionView.deselectItem(at: indexPath, animated: true)
-        self.didTapCellAction(item: item)
+        self.didTapCellAction(item: item) {
+            collectionView.deleteItems(at: [indexPath])
+        }
     }
 }
 

@@ -1,0 +1,6 @@
+framework module Pods_SpreadsheetsDataBase {
+  umbrella header "Pods-SpreadsheetsDataBase-umbrella.h"
+
+  export *
+  module * { export * }
+}
