@@ -15,6 +15,8 @@
 		BDA1256E285DA1B500AD2756 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BDA1256D285DA1B500AD2756 /* Assets.xcassets */; };
 		BDA12571285DA1B500AD2756 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BDA1256F285DA1B500AD2756 /* LaunchScreen.storyboard */; };
 		BDA1257D285DA52200AD2756 /* DataBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA1257C285DA52200AD2756 /* DataBase.swift */; };
+		BDA6202A286DD09900470187 /* TableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA62028286DD09900470187 /* TableCell.swift */; };
+		BDA6202B286DD09900470187 /* TableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDA62029286DD09900470187 /* TableCell.xib */; };
 		BDADD4EA285DE25800198A4D /* sheet.json in Resources */ = {isa = PBXBuildFile; fileRef = BDADD4E9285DE25800198A4D /* sheet.json */; };
 		BDADD4EC285DE53E00198A4D /* SheetItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDADD4EB285DE53E00198A4D /* SheetItem.swift */; };
 		BDADD4EE285DF30A00198A4D /* SheetError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDADD4ED285DF30A00198A4D /* SheetError.swift */; };
@@ -43,6 +45,8 @@
 		BDA12570285DA1B500AD2756 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BDA12572285DA1B500AD2756 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BDA1257C285DA52200AD2756 /* DataBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBase.swift; sourceTree = "<group>"; };
+		BDA62028286DD09900470187 /* TableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableCell.swift; sourceTree = "<group>"; };
+		BDA62029286DD09900470187 /* TableCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableCell.xib; sourceTree = "<group>"; };
 		BDADD4E9285DE25800198A4D /* sheet.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sheet.json; sourceTree = "<group>"; };
 		BDADD4EB285DE53E00198A4D /* SheetItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetItem.swift; sourceTree = "<group>"; };
 		BDADD4ED285DF30A00198A4D /* SheetError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetError.swift; sourceTree = "<group>"; };
@@ -78,7 +82,6 @@
 				C7DB7CA5B898D6BA64CCB380 /* Pods-SpreadsheetsDataBase.debug.xcconfig */,
 				1CD0C8CF3F2BB9786DA9B9DE /* Pods-SpreadsheetsDataBase.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -151,6 +154,15 @@
 			path = Storyboards;
 			sourceTree = "<group>";
 		};
+		BDA62027286DD06200470187 /* TableCell */ = {
+			isa = PBXGroup;
+			children = (
+				BDA62028286DD09900470187 /* TableCell.swift */,
+				BDA62029286DD09900470187 /* TableCell.xib */,
+			);
+			path = TableCell;
+			sourceTree = "<group>";
+		};
 		BDADD4F1285DF68E00198A4D /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -175,6 +187,7 @@
 			isa = PBXGroup;
 			children = (
 				BDA12568285DA1B300AD2756 /* MainViewController.swift */,
+				BDA62027286DD06200470187 /* TableCell */,
 				BDADD501285E09EB00198A4D /* WideCell */,
 				BDADD4F8285E092000198A4D /* SquareCell */,
 			);
@@ -298,6 +311,7 @@
 				BDADD500285E09B900198A4D /* WideCollectionViewCell.xib in Resources */,
 				BDADD505285E0A2200198A4D /* SquareCollectionViewCell.xib in Resources */,
 				BDA1256C285DA1B300AD2756 /* Main.storyboard in Resources */,
+				BDA6202B286DD09900470187 /* TableCell.xib in Resources */,
 				BDADD4EA285DE25800198A4D /* sheet.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -353,6 +367,7 @@
 			files = (
 				BD5A478828633EA1004B1AF6 /* DeleteData.swift in Sources */,
 				BDC3E2E3285F1C82000CE05F /* DetailViewController.swift in Sources */,
+				BDA6202A286DD09900470187 /* TableCell.swift in Sources */,
 				BDC3E2EC285F2AA3000CE05F /* Storybordable.swift in Sources */,
 				BDADD4EC285DE53E00198A4D /* SheetItem.swift in Sources */,
 				BDA12569285DA1B300AD2756 /* MainViewController.swift in Sources */,

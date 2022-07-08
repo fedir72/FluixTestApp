@@ -61,6 +61,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="bottomStack" destination="5yf-Xh-Vbj" id="wEi-HZ-q31"/>
                         <outlet property="newFileButton" destination="Abf-Dm-iS7" id="b4a-0L-l08"/>
                         <outlet property="newFolderButton" destination="f21-bx-Cla" id="70K-at-wzA"/>
                         <outlet property="switchStateButton" destination="c3n-Cy-Xfn" id="MT0-Y7-1bd"/>

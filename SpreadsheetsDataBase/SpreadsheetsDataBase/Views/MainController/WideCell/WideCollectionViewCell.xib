@@ -55,7 +55,6 @@
             <size key="customSize" width="362" height="62"/>
             <connections>
                 <outlet property="itemLabel" destination="CZi-6Z-Vxr" id="36i-71-wRe"/>
-                <outlet property="openNextFolderlabel" destination="06c-0o-h08" id="ZnT-cK-IFX"/>
                 <outlet property="pointerLabel" destination="06c-0o-h08" id="nha-R3-ZDj"/>
                 <outlet property="typeImageView" destination="IM4-mx-9Gw" id="kMR-Yu-rCZ"/>
             </connections>

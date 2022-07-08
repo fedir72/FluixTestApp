@@ -6,12 +6,12 @@
 //
 
 import UIKit
+import SnapKit
 
 //MARK: - Constants
 fileprivate struct Constant {
     static let stateKey = "isCollectionViewState"
     static let apiKey = "i8s3hscsk4ajd"
-    static let numberOfSection: Int = 2
     static let widecellHeight: CGFloat = 60
     static let numberOfitemInRow: CGFloat = 3
     static let minimumSpasing: CGFloat = 2
@@ -30,51 +30,65 @@ class MainViewController: UIViewController, Storybordable {
     
     var currentParentID = ""
     let userDefault = UserDefaults.standard
+    lazy var tableviewHeight: CGFloat = view.bounds.height-85
+    var tableview: UITableView!
     var collectionView: UICollectionView!
     
-    var isCollectionViewState = false {
+    var listState = true {
         didSet {
-            userDefault.set(isCollectionViewState, forKey: Constant.stateKey)
-            collectionView?.reloadData()
+            userDefault.set(listState, forKey: Constant.stateKey)
+            switchListHeight()
+            tableview.snp.updateConstraints {
+                $0.height.equalTo(listState ? tableviewHeight : 0)
+            }
+            collectionView.snp.updateConstraints {
+                $0.height.equalTo(listState ? 0 : tableviewHeight)
+            }
             
+            UIView.animate(withDuration: 0.5) {
+                self.view.layoutIfNeeded()
+            }completion: { _ in
+                self.tableview.reloadData()
+                self.collectionView.reloadData()
+            
+            }
         }
     }
     var dataSourse: Sheet? {
-        didSet { collectionView?.reloadData() }
+        didSet {
+            tableview?.reloadData()
+            collectionView?.reloadData()
+        }
     }
     
     //MARK: - @IBOutlets
-    @IBOutlet weak var switchStateButton: UIBarButtonItem!
-    @IBOutlet weak var newFolderButton: UIButton!
-    @IBOutlet weak var newFileButton: UIButton!
+    @IBOutlet private weak var switchStateButton: UIBarButtonItem!
+    @IBOutlet private weak var bottomStack: UIStackView!
+    @IBOutlet private weak var newFolderButton: UIButton!
+    @IBOutlet private weak var newFileButton: UIButton!
     
     //MARK: - life cycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupTableView()
         setupCollectionView()
+        setupConstraints()
+        
         if dataSourse == nil {
             title = "Main folder"
             self.getDataForDataSourse()
         }
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        collectionView.frame = .init(x: 0,
-                                     y: 0,
-                                     width: view.bounds.width,
-                                     height: view.bounds.height-90)
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        isCollectionViewState = userDefault.bool(forKey: Constant.stateKey)
+        listState = userDefault.bool(forKey: Constant.stateKey)
     }
     
     //MARK: - @IBActions
     //toggle the collectionview state
     @IBAction func switchCollectionViewState(_ sender: UIBarButtonItem) {
-        isCollectionViewState.toggle()
+        listState.toggle()
     }
     
 
@@ -94,11 +108,20 @@ class MainViewController: UIViewController, Storybordable {
 
 //MARK: -  private funcs
 private extension MainViewController {
+    
+    func switchListHeight() {
+        switch listState {
+        case true:
+            switchStateButton.image = UIImage(systemName: "rectangle.grid.2x2")
+        case false:
+            switchStateButton.image = UIImage(systemName: "list.dash")
+        }
+    }
+    
     //MARK: - didtap cellAction func
     func didTapCellAction(item: SheetItem,completion: @escaping () -> Void ) {
         let alert = UIAlertController(title: "Atension", message: "choise the action", preferredStyle: .alert)
         alert.addAction(.init(title: "delete the information", style: .destructive) { [self] _ in
-           // print("delete")
             
             self.network.deleteCell(by: item.uuid) { result in
                 DispatchQueue.main.async {
@@ -112,16 +135,13 @@ private extension MainViewController {
                         print("err",error.localizedDescription)
                     }
                 }
-                
             }
-                
         })
+        alert.addAction(.init(title: "cancel", style: .destructive))
         alert.addAction(.init(title: "open", style: .default) { _ in
-            
             if item.type == .d {
                 let title = String(item.content.split(separator: ".").first ?? "File")
                 let newData = self.dataBace.getChildItems(by: item.uuid)
-                
                 self.coordinator?.goToMainVC(currentParentId: item.uuid,
                                         title: title,
                                         datasourse: newData,
@@ -132,11 +152,31 @@ private extension MainViewController {
         })
         present(alert, animated: true)
     }
+  //MARK: - setupConstraints()
+    func setupConstraints() {
+        tableview.snp.makeConstraints { make in
+            make.top.trailing.leading.equalToSuperview()
+            make.height.equalTo(tableviewHeight)
+        }
+        collectionView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(bottomStack.snp.top)
+            make.height.equalTo(0)
+            make.top.equalTo(tableview.snp.bottom)
+        }
+    }
     
- 
+ //MARK: - setupTableView()
+    func setupTableView() {
+        tableview = UITableView()
+        tableview.alwaysBounceVertical = true
+        tableview.delegate = self
+        tableview.dataSource = self
+        tableview.register(TableCell.nib(), forCellReuseIdentifier: TableCell.id)
+        view.addSubview(tableview)
+    }
     
-    
-//MARK: - setupCollectionView()
+    //MARK: - setupCollectionView()
     func setupCollectionView() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -144,20 +184,27 @@ private extension MainViewController {
                                            left: Constant.minimumSpasing,
                                            bottom: Constant.minimumSpasing,
                                            right: Constant.minimumSpasing)
+        layout.minimumInteritemSpacing = Constant.minimumSpasing
+        layout.minimumLineSpacing = Constant.minimumSpasing
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.addSubview(collectionView)
         collectionView.backgroundColor = .clear
         collectionView.alwaysBounceVertical = true
         collectionView.register(SquareCollectionViewCell.nib(),
-                                 forCellWithReuseIdentifier: SquareCollectionViewCell.id)
-        collectionView.register(WideCollectionViewCell.nib(),
-                                 forCellWithReuseIdentifier: WideCollectionViewCell.id)
+                                forCellWithReuseIdentifier: SquareCollectionViewCell.id)
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.backgroundColor = .clear
+        
+        view.addSubview(collectionView)
+        collectionView.snp.makeConstraints { make in
+            make.bottom.leading.trailing.equalToSuperview()
+            make.top.equalTo(tableview.snp.bottom)
+        }
+        
+        
     }
     
-   private func createNewSheetCell( parentId: String,
+    //MARK: - createNewSheetCell
+   func createNewSheetCell( parentId: String,
                             type: TypeOfCell ,
                             completion: @escaping (Result<Int,SheetError>) -> Void ) {
         
@@ -202,46 +249,52 @@ private extension MainViewController {
     }
 }
 
+//MARK: - UITableViewDataSource
+extension MainViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+               return dataSourse?.count ?? 0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let item = dataSourse?[indexPath.row]
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: TableCell.id,
+                                                       for: indexPath) as? TableCell else {
+            return UITableViewCell()
+        }
+        cell.setupCell(by: item!)
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 62
+    }
+    
+}
+
+//MARK: - UITableViewDelegate
+extension MainViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let item = dataSourse?[indexPath.item] else { return }
+        self.didTapCellAction(item: item) {
+            self.tableview.deleteRows(at: [indexPath], with: .fade)
+        }
+    }
+}
+
+
 //MARK: - UICollectionViewDataSource
 extension MainViewController: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return Constant.numberOfSection
+        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch isCollectionViewState {
-        case false:
-            switchStateButton.image = UIImage(systemName: "rectangle.grid.2x2")
-            if section == 0 {
-                return 0
-            }else{
                 return dataSourse?.count ?? 0
-            }
-        case true:
-            switchStateButton.image = UIImage(systemName: "list.dash")
-            if section == 0 {
-                return dataSourse?.count ?? 0
-            }else{
-                return 0
-            }
-        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         let item = dataSourse?[indexPath.item]
-        switch indexPath.section {
-        case 0 :
-            guard let wideCell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: WideCollectionViewCell.id,
-                for: indexPath) as? WideCollectionViewCell else {
-                return UICollectionViewCell()
-            }
-            
-            wideCell.setupCell(by: item!)
-            return wideCell
-        default:
             guard let squareCell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: SquareCollectionViewCell.id,
                 for: indexPath) as? SquareCollectionViewCell else {
@@ -249,7 +302,6 @@ extension MainViewController: UICollectionViewDataSource {
             }
             squareCell.setupCell(by: item!)
             return squareCell
-        }
     }
 }
 
@@ -269,23 +321,18 @@ extension MainViewController: UICollectionViewDelegate {
 extension MainViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        let sqWidth = view.bounds.width/Constant.numberOfitemInRow
-        let sqHeight = sqWidth*Constant.cellProptional
-        
-        switch indexPath.section {
-        case 0:  return CGSize(width: view.bounds.size.width - Constant.minimumSpasing,
-                               height: Constant.widecellHeight)
-        default: return CGSize(width:sqWidth - (Constant.minimumSpasing+1),
-                               height: sqHeight )
-        }
+      let sqWidth = view.bounds.width/Constant.numberOfitemInRow
+      let sqHeight = sqWidth*Constant.cellProptional
+      return CGSize(width:sqWidth - (Constant.minimumSpasing+1),
+                    height: sqHeight )
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return Constant.minimumSpasing
-    }
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+//        return Constant.minimumSpasing
+//    }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return Constant.minimumSpasing
-    }
-    
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+//        return Constant.minimumSpasing
+//    }
+//
 }

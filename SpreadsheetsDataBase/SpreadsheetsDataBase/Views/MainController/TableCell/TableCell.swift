@@ -1,31 +1,40 @@
 //
-//  WideCollectionViewCell.swift
+//  TableCell.swift
 //  SpreadsheetsDataBase
 //
-//  Created by Fedii Ihor on 18.06.2022.
+//  Created by Fedii Ihor on 30.06.2022.
 //
 
 import UIKit
 
-class WideCollectionViewCell: UICollectionViewCell {
+class TableCell: UITableViewCell {
+    
+    static let id = "TableCell"
+    static func nib() -> UINib {
+        return UINib(nibName: TableCell.id, bundle: nil)
+    }
     
     @IBOutlet private weak var typeImageView: UIImageView!
     @IBOutlet private weak var itemLabel: UILabel!
     @IBOutlet weak var pointerLabel: UILabel!
     
-    static let id = "WideCollectionViewCell"
-    static func nib() -> UINib {
-        return UINib.init(nibName: WideCollectionViewCell.id, bundle: nil)
-    }
-
+    
     override func awakeFromNib() {
         super.awakeFromNib()
+        // Initialization code
         typeImageView.contentMode = .scaleAspectFit
-        contentView.backgroundColor = .tertiarySystemFill
-        contentView.layer.borderWidth = 2
-        contentView.layer.borderColor = UIColor.systemGray4.cgColor
-        contentView.layer.cornerRadius = 5
-        contentView.clipsToBounds = true
+        isUserInteractionEnabled = true
+        backgroundColor = .tertiarySystemFill
+        layer.borderWidth = 2
+        layer.borderColor = UIColor.systemGray4.cgColor
+        layer.cornerRadius = 5
+        clipsToBounds = true
+    }
+
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+
+        // Configure the view for the selected state
     }
     
     open func setupCell(by item: SheetItem) {
@@ -38,6 +47,4 @@ class WideCollectionViewCell: UICollectionViewCell {
         pointerLabel.alpha = (item.type == .d ? 1.0 : 0.0)
     }
     
-    
-
 }

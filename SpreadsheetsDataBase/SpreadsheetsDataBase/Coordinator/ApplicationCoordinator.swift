@@ -12,7 +12,8 @@ class AppCoordinator: Coordinator {
     
     init(_ navigationController: UINavigationController) {
         self.navigationController = navigationController
-        self.navigationController.navigationBar.prefersLargeTitles = true
+        //self.navigationController.navigationBar.prefersLargeTitles = true
+       // navigationController.navigationBar.layer.opacity = 0
     }
     
     func start() {
